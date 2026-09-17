@@ -16,6 +16,17 @@ EXPECTED_COLUMNS = [
 ]
 
 def load_transactions(path):
+
+    """
+    Opens a transaction CSV file and returns its contents as a table.
+
+    path: the location of the CSV file to open.
+
+    Returns the loaded data, and also prints how many rows and columns
+    were found, so a human can quickly confirm the file loaded properly.
+    """
+
+
     print(f" ===================================== Reading transaction sample from: {path}. ===================================== ")
 
     transactions = pd.read_csv(path)
@@ -27,5 +38,5 @@ def load_transactions(path):
     return transactions
 
 if __name__ == "__main__":
-    transactions = load_transactions(RAW_SAMPLE_PATH)
+    transactions = load_transactions(RAW_SAMPLE_PATH)  
     print(transactions.tail(20))
