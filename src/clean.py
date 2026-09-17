@@ -54,5 +54,5 @@ if __name__ == "__main__":
         print("No missing columns found.")
 
     missing_values_total = check_missing_values(transactions)
-    print(f"Missing values per column: {missing_values_total}")
-    #print(missing_values_total)
+    print("Missing values per column:")
+    print(missing_values_total)
