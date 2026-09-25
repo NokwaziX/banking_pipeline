@@ -5,10 +5,12 @@ It checks the loaded transaction data for two kinds of problems:
 missing columns, and missing (blank) values in any column. It does not
 fix anything - it only reports what it finds, so a human decides what
 to do about it.
-"""
-from collect import *
 
-def check_missing_columns(transations):
+"""
+from collect import load_transactions
+from config import RAW_SAMPLE_PATH, EXPECTED_COLUMNS
+
+def check_missing_columns(transactions):
 
     """
     Checks whether all expected columns are present in the data.
