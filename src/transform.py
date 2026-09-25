@@ -126,6 +126,33 @@ def calculate_average_fraud_amount(transactions):
 
     return average_fraud_amount
 
+
+def calculate_average_non_fraud_amount(transactions):
+    """
+    Calculates the average transaction amount for non-fraud
+    transactions only.
+
+    transactions: the loaded transaction table.
+
+    Returns the average non-fraud transaction amount.
+    """
+    is_fraud_column = transactions["is_fraud"]
+    amount_column = transactions["amount"]
+
+    non_fraud_amount_total = 0
+    non_fraud_transaction_count = 0
+
+    row_position = 0
+    for value in is_fraud_column:
+        if value == 0:
+            non_fraud_amount_total = non_fraud_amount_total + amount_column[row_position]
+            non_fraud_transaction_count = non_fraud_transaction_count + 1
+        row_position = row_position + 1
+
+    average_non_fraud_amount = non_fraud_amount_total / non_fraud_transaction_count
+
+    return average_non_fraud_amount
+
 if __name__ == "__main__":
     transactions = load_transactions(RAW_SAMPLE_PATH)
 
@@ -148,3 +175,6 @@ if __name__ == "__main__":
 
     average_fraud_amount = calculate_average_fraud_amount(transactions)
     print(f"\nAverage fraud transaction amount: {average_fraud_amount}")
+
+    average_non_fraud_amount = calculate_average_non_fraud_amount(transactions)
+    print(f"\nAverage non-fraud transaction amount: {average_non_fraud_amount}")
