@@ -47,7 +47,7 @@ def count_fraud_transactions(transactions):
     return fraud_transactions
 
 
-def calculate_fraud_rate_percent(total_transactions, fraud_transactions):
+def calculate_fraud_percent(total_transactions, fraud_transactions):
     """
     Calculates what percentage of transactions are fraud.
 
@@ -60,13 +60,38 @@ def calculate_fraud_rate_percent(total_transactions, fraud_transactions):
     return fraud_rate_percent
 
 
+def count_fraud_by_category(transactions):
+    """
+    Counts fraud transactions separately for each merchant category.
+
+    transactions: the loaded transaction table.
+
+    Returns a count of fraud transactions per merchant category,
+    sorted from the highest count to the lowest.
+    """
+    is_fraud_column = transactions["is_fraud"]
+    fraud_rows_only = is_fraud_column == 1
+
+    fraud_only = transactions[fraud_rows_only]
+    fraud_categories = fraud_only["merchant_category"]
+
+    fraud_by_category = fraud_categories.value_counts()
+
+    return fraud_by_category
+
 if __name__ == "__main__":
     transactions = load_transactions(RAW_SAMPLE_PATH)
 
     total_transactions = count_total_transactions(transactions)
     fraud_transactions = count_fraud_transactions(transactions)
-    fraud_rate_percent = calculate_fraud_rate_percent(total_transactions, fraud_transactions)
+    fraud_rate_percent = calculate_fraud_percent(total_transactions, fraud_transactions)
+    # fraud_transations_by_category = count_fraud_by_category(transactions)
 
     print(f"Total transactions: {total_transactions}")
     print(f"Fraud transactions: {fraud_transactions}")
     print(f"Fraud rate: {fraud_rate_percent}%")
+
+
+    fraud_transations_by_category = count_fraud_by_category(transactions)
+    print("\nFraud transations by merhant category:")
+    print(fraud_transations_by_category)
