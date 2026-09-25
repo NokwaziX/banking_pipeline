@@ -6,7 +6,8 @@ from it.
 
 """
 
-from collect import load_transactions, RAW_SAMPLE_PATH
+from collect import load_transactions
+from config import RAW_SAMPLE_PATH
 
 
 def count_total_transactions(transactions):
