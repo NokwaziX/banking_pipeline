@@ -79,13 +79,59 @@ def count_fraud_by_category(transactions):
 
     return fraud_by_category
 
+
+def count_fraud_by_month(transactions):
+    """
+    Counts fraud transactions separately for each month.
+
+    transactions: the loaded transaction table.
+
+    Returns a count of fraud transactions per month, sorted from
+    the highest count to the lowest.
+    """
+    is_fraud_column = transactions["is_fraud"]
+    fraud_rows_only = is_fraud_column == 1
+
+    fraud_only = transactions[fraud_rows_only]
+    fraud_months = fraud_only["month"]
+
+    fraud_by_month = fraud_months.value_counts()
+
+    return fraud_by_month
+
+
+def calculate_average_fraud_amount(transactions):
+    """
+    Calculates the average transaction amount for fraud transactions
+    only.
+
+    transactions: the loaded transaction table.
+
+    Returns the average fraud transaction amount.
+    """
+    is_fraud_column = transactions["is_fraud"]
+    amount_column = transactions["amount"]
+
+    fraud_amount_total = 0
+    fraud_transaction_count = 0
+
+    row_position = 0
+    for value in is_fraud_column:
+        if value == 1:
+            fraud_amount_total = fraud_amount_total + amount_column[row_position]
+            fraud_transaction_count = fraud_transaction_count + 1
+        row_position = row_position + 1
+
+    average_fraud_amount = fraud_amount_total / fraud_transaction_count
+
+    return average_fraud_amount
+
 if __name__ == "__main__":
     transactions = load_transactions(RAW_SAMPLE_PATH)
 
     total_transactions = count_total_transactions(transactions)
     fraud_transactions = count_fraud_transactions(transactions)
     fraud_rate_percent = calculate_fraud_percent(total_transactions, fraud_transactions)
-    # fraud_transations_by_category = count_fraud_by_category(transactions)
 
     print(f"Total transactions: {total_transactions}")
     print(f"Fraud transactions: {fraud_transactions}")
@@ -95,3 +141,10 @@ if __name__ == "__main__":
     fraud_transations_by_category = count_fraud_by_category(transactions)
     print("\nFraud transations by merhant category:")
     print(fraud_transations_by_category)
+
+    fraud_transactions_by_month = count_fraud_by_month(transactions)
+    print("\nFraud transactions by month:")
+    print(fraud_transactions_by_month)
+
+    average_fraud_amount = calculate_average_fraud_amount(transactions)
+    print(f"\nAverage fraud transaction amount: {average_fraud_amount}")
