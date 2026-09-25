@@ -2,16 +2,8 @@
 This file is the TRANSFORM step of the fraud detection pipeline.
 
 It takes the loaded transaction data and calculates summary numbers
-from it - things like the total fraud rate. It does not check for
-problems (that's Clean's job) or save anything (that's Storage's job).
-"""
+from it.
 
-"""
-This file is the TRANSFORM step of the fraud detection pipeline.
-
-It takes the loaded transaction data and calculates summary numbers
-from it - things like the total fraud rate. It does not check for
-problems (that's Clean's job) or save anything (that's Storage's job).
 """
 
 from collect import load_transactions, RAW_SAMPLE_PATH
@@ -153,28 +145,62 @@ def calculate_average_non_fraud_amount(transactions):
 
     return average_non_fraud_amount
 
+
+def build_summary(transactions):
+    """
+    Runs every Transform calculation and gathers the results into
+    one single package.
+
+    transactions: the loaded transaction table.
+
+    Returns a dictionary containing every summary number and table
+    calculated by this file.
+    """
+    total = count_total_transactions(transactions)
+    fraud_count = count_fraud_transactions(transactions)
+    fraud_rate = calculate_fraud_percent(total, fraud_count)
+
+    by_category = count_fraud_by_category(transactions)
+    by_month = count_fraud_by_month(transactions)
+
+    average_fraud = calculate_average_fraud_amount(transactions)
+    average_non_fraud = calculate_average_non_fraud_amount(transactions)
+
+    summary = {
+        "total_transactions": total,
+        "fraud_transactions": fraud_count,
+        "fraud_rate_percent": fraud_rate,
+        "fraud_by_category": by_category,
+        "fraud_by_month": by_month,
+        "average_fraud_amount": average_fraud,
+        "average_non_fraud_amount": average_non_fraud
+    }
+
+    return summary
+
+
 if __name__ == "__main__":
     transactions = load_transactions(RAW_SAMPLE_PATH)
 
-    total_transactions = count_total_transactions(transactions)
-    fraud_transactions = count_fraud_transactions(transactions)
-    fraud_rate_percent = calculate_fraud_percent(total_transactions, fraud_transactions)
+    summary = build_summary(transactions)
 
-    print(f"Total transactions: {total_transactions}")
-    print(f"Fraud transactions: {fraud_transactions}")
-    print(f"Fraud rate: {fraud_rate_percent}%")
+    total = summary["total_transactions"]
+    fraud_count = summary["fraud_transactions"]
+    fraud_rate = summary["fraud_rate_percent"]
+    by_category = summary["fraud_by_category"]
+    by_month = summary["fraud_by_month"]
+    average_fraud = summary["average_fraud_amount"]
+    average_non_fraud = summary["average_non_fraud_amount"]
 
+    print("\nTotal transactions:", total)
+    print("Fraud transactions:", fraud_count)
+    print(f"Fraud rate: {fraud_rate:.2f}%")
 
-    fraud_transations_by_category = count_fraud_by_category(transactions)
-    print("\nFraud transations by merhant category:")
-    print(fraud_transations_by_category)
+    print("\nFraud transactions by merchant category:")
+    print(by_category)
 
-    fraud_transactions_by_month = count_fraud_by_month(transactions)
     print("\nFraud transactions by month:")
-    print(fraud_transactions_by_month)
+    print(by_month)
 
-    average_fraud_amount = calculate_average_fraud_amount(transactions)
-    print(f"\nAverage fraud transaction amount: {average_fraud_amount}")
-
-    average_non_fraud_amount = calculate_average_non_fraud_amount(transactions)
-    print(f"\nAverage non-fraud transaction amount: {average_non_fraud_amount}")
+    print(f"\nAverage fraud transaction amount: R{average_fraud:.2f}")
+    print(f"Average non-fraud transaction amount: R{average_non_fraud:.2f}")
