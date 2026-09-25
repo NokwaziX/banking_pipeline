@@ -138,3 +138,5 @@ Output: a staged CSV and a JSON log in `data/staging/`.
 
 See `ARCHITECTURE.md` for how the files relate to each other, and
 `docs/wiki/` for a plain-English glossary of terms used in this project.
+
+Verification Code: WTC-JZQR6V3F
